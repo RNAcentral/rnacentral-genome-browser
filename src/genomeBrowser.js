@@ -12,12 +12,9 @@ function GenomeBrowser() {
 
   const stylingContent = {
     div: {
-      overflowX: "auto",
-      fontFamily: "Verdana,sans-serif",
-      color: "#333333",
-      fontSize: "14px"
+      padding: "0 9px",
     }, select: {
-      fontSize: "1rem",
+      fontSize: "14px",
       color: "#495057",
       marginLeft: "10px",
       marginBottom: "20px",
