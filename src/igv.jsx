@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import igv from "igv";
+import igv from "igv/dist/igv.esm.js";
 import "./igv.css"
 
 import ftpData from "./files";
