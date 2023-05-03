@@ -4,7 +4,7 @@ import "./igv.css"
 
 import ftpData from "./files";
 
-const IgvComponent = ({ data, index }) => {
+const IgvComponent = ({ data, index, files }) => {
   const igvContainer = useRef();
   const [browser, setBrowser] = useState();
   const [error, setError] = useState(false);
@@ -16,31 +16,33 @@ const IgvComponent = ({ data, index }) => {
     return ftpData.find((item) => item.name === data.ensembl_assembly.assembly_id);
   }, [data.ensembl_assembly.assembly_id])
 
+  const userTrack = useMemo(() =>{
+    return {
+      name: "User annotation",
+      type: "annotation",
+      displayMode: "expanded",
+      order: 1,
+      url: files && files.length > 0 ? files[0] : "",
+      indexURL: files && files.length > 1 ? files[1] : "",
+      color: "#8d00d3",
+    }
+  }, [files])
+
   const ensemblTrack = useMemo(() =>{
     return {
       name: "Ensembl annotation",
       type: "annotation",
       format: "gff",
       displayMode: "expanded",
-      order: 1,
+      order: 2,
       url: getFTPdata ? getFTPdata.gffFile : "",
       indexURL: getFTPdata ? getFTPdata.gffIndex : "",
       color: (feature) => {
         switch (feature.getAttributeValue("type")) {
-          case "ncRNA":
-            return "#000096"
-          case "mRNA":
-            return "#000096"
-          case "lnc_RNA":
-            return "#000096"
-          case "miRNA":
-            return "#000096"
-          case "rRNA":
-            return "#000096"
-          case "transcript":
-            return "#d37200"
+          case "biological_region":
+            return "#fff"
           default:
-            return "#6c757d"
+            return "#000096"
         }
       }
     }
@@ -50,9 +52,9 @@ const IgvComponent = ({ data, index }) => {
     return {
       name: "RNAcentral genomic coordinates data",
       type: "annotation",
-      format: "bed",
+      format: "gff",
       displayMode: "expanded",
-      order: 2,
+      order: 3,
       color: "#3f7d97",
       url: getFTPdata ? getFTPdata.bedFile : "",
       indexURL: getFTPdata ? getFTPdata.bedIndex : "",
@@ -66,7 +68,10 @@ const IgvComponent = ({ data, index }) => {
       setGenomeIndex(index);
       setReloadTrack(true);
     }
-  }, [data, index, genomeIndex])
+    if (files) {
+      setReloadTrack(true);
+    }
+  }, [data, files, index, genomeIndex])
 
   useEffect(() => {
     const assemblyId = data.ensembl_assembly.assembly_id;
@@ -107,6 +112,10 @@ const IgvComponent = ({ data, index }) => {
           browser.removeTrackByName("RNAcentral genomic coordinates data");
           browser.loadTrack(ensemblTrack);
           browser.loadTrack(rnacentralTrack);
+          if (files) {
+            browser.removeTrackByName("User annotation");
+            browser.loadTrack(userTrack);
+          }
           setReloadTrack(false);
         }
       } else {
@@ -147,7 +156,7 @@ const IgvComponent = ({ data, index }) => {
     } else {
       setError(true)
     }
-  }, [browser, data, ensemblTrack, getFTPdata, locus, reloadTrack, rnacentralTrack])
+  }, [browser, data, ensemblTrack, files, getFTPdata, locus, reloadTrack, rnacentralTrack, userTrack])
 
   return (
     error ? <p>
