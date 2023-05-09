@@ -109,8 +109,13 @@ function GenomeBrowser() {
       igvData.end = "";
     }
 
-    // e.g. ['homo_sapiens|GRCh38', 'mus_musculus|GRCm39', ...]
-    let genomeList = Array.from(new Set(genome.results.map(item => item.ensembl_url + "|" + item.assembly_id))).sort();
+    // get data for the select field
+    // e.g. ['Homo sapiens|GRCh38|homo_sapiens', 'Mus musculus|GRCm39|mus_musculus', ...]
+    // where "Homo sapiens|GRCh38" is the string displayed in the select and
+    // homo_sapiens is the value used to get the data from the API
+    let genomeList = Array.from(new Set(
+        genome.results.map(item => item.common_name + "|" + item.assembly_id + "|" + item.ensembl_url)
+    )).sort();
 
     return <div style={stylingContent.div}>
       <table>
@@ -130,7 +135,7 @@ function GenomeBrowser() {
             <td>
               <select style={stylingContent.select} name="genomic-species-select" value={selectedGenome} onChange={handleSelectChange}>
                 {
-                  genomeList && genomeList.map(item => <option key={ item } value={ item.split("|")[0] }>
+                  genomeList && genomeList.map(item => <option key={ item } value={ item.split("|")[2] }>
                     { item.split("|")[0] } ({ item.split("|")[1] })
                   </option>)
                 }
