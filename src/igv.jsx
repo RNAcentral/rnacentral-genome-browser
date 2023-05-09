@@ -132,7 +132,11 @@ const IgvComponent = ({ data, index, files }) => {
 
             popoverData.forEach(function (nameValue) {
               if (nameValue.name) {
-                let domain = window.location.host === "localhost:3000" ? "https://rnacentral.org/rna/" : window.location.host + "/rna/"
+                let domain = window.location.host.includes("test")
+                    ? "https://test.rnacentral.org/rna/"
+                    : window.location.host.includes("localhost:8000") || window.location.host.includes("127.0.0.1:8000")
+                    ? "http://localhost:8000/rna/"
+                    : "https://rnacentral.org/rna/"
                 // Customize pop-over text to include a link
                 let value = nameValue.name.toLowerCase() === 'name' && nameValue.value.startsWith("URS")
                     ? '<a href="' + domain + nameValue.value + '">' + nameValue.value + '</a>'
