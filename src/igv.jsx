@@ -95,9 +95,10 @@ const IgvComponent = ({ data, index, files }) => {
         tracks: [ ensemblTrack, rnacentralTrack ],
         trackDefaults: {
           annotation: {
-            minHeight: 100,
-            maxHeight: 600,
-            autoHeight: true,
+            height: 300
+            // minHeight: 100,
+            // maxHeight: 600,
+            // autoHeight: true,
           }
         }
       };
