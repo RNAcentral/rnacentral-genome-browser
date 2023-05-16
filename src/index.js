@@ -19,15 +19,20 @@ class RNAcentralGenomeBrowser extends HTMLElement {
     const mountPoint = getMountPoint();
     shadowRoot.appendChild(mountPoint);
 
+    // get html attribute
     const data = JSON.parse(this.attributes.data ? this.attributes.data.nodeValue : null);
     const urs = data && data["urs"] ? data["urs"] : null;
     const taxid = data && data["taxid"] ? data["taxid"] : null;
+
+    // get query parameter
+    const url = window.location.href.split("?species=");
+    const species = url.length > 1 ? url[1] : false;
 
     let component;
     if (urs && taxid) {
       component = <GenomeBrowserURS urs={urs} taxid={taxid}/>
     } else {
-      component = <GenomeBrowser />
+      component = <GenomeBrowser species={species}/>
     }
 
     ReactDOM.render(

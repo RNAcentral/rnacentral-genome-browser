@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import IgvComponent from "./igv"
 import { useGetGenomesQuery, useGetGenomeBrowserQuery } from "./slice/apiSlice"
 
-function GenomeBrowser() {
+function GenomeBrowser({species}) {
   const [files, setFiles] = useState();
   const [fileError, setFileError] = useState(false);
-  const [selectedGenome, setSelectedGenome] = useState("homo_sapiens");
+  const [selectedGenome, setSelectedGenome] = useState(species ? species : "homo_sapiens");
   const [prevGenome, setPrevGenome] = useState();
 
-  const { data, isLoading, isFetching, isSuccess } = useGetGenomeBrowserQuery(selectedGenome);
+  const { data, isLoading, isFetching, isSuccess, isError } = useGetGenomeBrowserQuery(selectedGenome);
   const { data: genome, isLoading: genomeIsLoading, isSuccess: genomeIsSuccess } = useGetGenomesQuery();
 
   const stylingContent = {
@@ -76,6 +76,10 @@ function GenomeBrowser() {
     } else {
       setFileError(true)
     }
+  }
+
+  if (isError) {
+    return <div>Error fetching genome data</div>
   }
 
   if (isLoading || isFetching || genomeIsLoading) {
