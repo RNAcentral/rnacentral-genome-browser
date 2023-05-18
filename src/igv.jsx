@@ -61,7 +61,9 @@ const IgvComponent = ({ data, index, files }) => {
     }
   }, [getFTPdata])
 
-  // Reload tracks when user clicks "Go to location" link
+  // Reload tracks when:
+  // 1 - user clicks "Go to location" link
+  // 2 - user uploads a file
   useEffect(() => {
     if (genomeIndex !== index){
       setLocus(data.ucsc_chromosome + ":" + data.start + "-" + data.end);
@@ -79,10 +81,13 @@ const IgvComponent = ({ data, index, files }) => {
     // We need a FASTA file to load the IGV
     if (getFTPdata && getFTPdata.fastaFile){
 
+      // Get species
+      const species = data.ensembl_assembly.ensembl_url ? data.ensembl_assembly.ensembl_url : data.ensembl_assembly.species
+
       // Set the browser's initial state
       const igvOptions = {
         search: {
-          url: `https://rest.ensembl.org/lookup/symbol/${data.ensembl_assembly.species}/$FEATURE$?content-type=application/json`,
+          url: `https://rest.ensembl.org/lookup/symbol/${species}/$FEATURE$?content-type=application/json`,
           chromosomeField: "seq_region_name",
           displayName: "display_name"
         },
@@ -156,6 +161,24 @@ const IgvComponent = ({ data, index, files }) => {
             // IGV to use our custom HTML in its pop-over.
             return markup;
           });
+
+          // Update the page URL whenever the IGV viewer locus changes
+          // Only change on the genome browser page, do not change sequence pages
+          if (data.ensembl_assembly.species){
+            browser.on('locuschange', function (referenceFrameList) {
+              let newLocus = referenceFrameList.map(rf => rf.getLocusString()).join('%20');
+              let newChr = newLocus.split(':')[0]
+              let newStart = newLocus.split(':')[1].split('-')[0]
+              let newEnd = newLocus.split(':')[1].split('-')[1]
+              let newParam = "?species=" + species
+                  + "&chromosome=" + newChr
+                  + "&start=" + newStart
+                  + "&end=" + newEnd;
+              window.history.replaceState("", "", window.location.origin + newParam);
+            });
+          }
+
+          // Update state
           setBrowser(browser)
         });
       }

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import IgvComponent from "./igv"
 import { useGetGenomesQuery, useGetGenomeBrowserQuery } from "./slice/apiSlice"
 
-function GenomeBrowser({species}) {
+function GenomeBrowser({species, chromosome, start, end}) {
   const [files, setFiles] = useState();
   const [fileError, setFileError] = useState(false);
   const [selectedGenome, setSelectedGenome] = useState(species ? species : "homo_sapiens");
@@ -99,13 +99,18 @@ function GenomeBrowser({species}) {
       return <div>Missing data to load IGV</div>
     }
 
-    if (data && data.chromosome) {
+    if (chromosome) {
+      igvData.ucsc_chromosome = chromosome
+    } else if (data && data.chromosome) {
       igvData.ucsc_chromosome = data.chromosome
     } else {
       igvData.ucsc_chromosome = "all"
     }
 
-    if (data && data.start && data.end) {
+    if (start && end) {
+      igvData.start = start;
+      igvData.end = end;
+    } else if (data && data.start && data.end) {
       igvData.start = data.start;
       igvData.end = data.end;
     } else {
