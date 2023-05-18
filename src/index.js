@@ -25,14 +25,23 @@ class RNAcentralGenomeBrowser extends HTMLElement {
     const taxid = data && data["taxid"] ? data["taxid"] : null;
 
     // get query parameter
-    const url = window.location.href.split("?species=");
-    const species = url.length > 1 ? url[1] : false;
+    const urlParams = new URLSearchParams(window.location.search);
+    const species = urlParams.get('species') ? urlParams.get('species') : false;
+    const chr = urlParams.get('chr') ? urlParams.get('chr') : false;
+    const chromosome = urlParams.get('chromosome') ? urlParams.get('chromosome') : chr ? chr : false;
+    const start = urlParams.get('start') ? urlParams.get('start') : false;
+    const end = urlParams.get('end') ? urlParams.get('end') : false;
 
     let component;
     if (urs && taxid) {
       component = <GenomeBrowserURS urs={urs} taxid={taxid}/>
     } else {
-      component = <GenomeBrowser species={species}/>
+      component = <GenomeBrowser
+          species={species}
+          chromosome={chromosome}
+          start={start}
+          end={end}
+      />
     }
 
     ReactDOM.render(
