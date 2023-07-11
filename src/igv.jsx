@@ -37,14 +37,8 @@ const IgvComponent = ({ data, index, files }) => {
       order: 2,
       url: getFTPdata ? getFTPdata.gffFile : "",
       indexURL: getFTPdata ? getFTPdata.gffIndex : "",
-      color: (feature) => {
-        switch (feature.getAttributeValue("type")) {
-          case "biological_region":
-            return "#fff"
-          default:
-            return "#000096"
-        }
-      }
+      color: "#000096",
+      filterTypes: ["biological_region"]
     }
   }, [getFTPdata])
 
