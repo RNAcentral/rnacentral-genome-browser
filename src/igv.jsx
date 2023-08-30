@@ -35,8 +35,8 @@ const IgvComponent = ({ data, index, files }) => {
       format: "gff",
       displayMode: "expanded",
       order: 2,
-      url: getFTPdata ? getFTPdata.gffFile : "",
-      indexURL: getFTPdata ? getFTPdata.gffIndex : "",
+      url: getFTPdata ? getFTPdata.ensemblTrack : "",
+      indexURL: getFTPdata ? getFTPdata.ensemblIndex : "",
       color: "#000096",
       filterTypes: ["biological_region"]
     }
@@ -50,8 +50,8 @@ const IgvComponent = ({ data, index, files }) => {
       displayMode: "expanded",
       order: 3,
       color: "#3f7d97",
-      url: getFTPdata ? getFTPdata.bedFile : "",
-      indexURL: getFTPdata ? getFTPdata.bedIndex : "",
+      url: getFTPdata ? getFTPdata.rnacentralTrack : "",
+      indexURL: getFTPdata ? getFTPdata.rnacentralIndex : "",
     }
   }, [getFTPdata])
 
