@@ -29,30 +29,30 @@ const IgvComponent = ({ data, index, files }) => {
   }, [files])
 
   const ensemblTrack = useMemo(() =>{
-    return {
+    return getFTPdata && getFTPdata.ensemblTrack ? {
       name: "Ensembl annotation",
       type: "annotation",
       format: "gff",
       displayMode: "expanded",
       order: 2,
-      url: getFTPdata ? getFTPdata.ensemblTrack : "",
-      indexURL: getFTPdata ? getFTPdata.ensemblIndex : "",
+      url: getFTPdata.ensemblTrack,
+      indexURL: getFTPdata.ensemblIndex,
       color: "#000096",
       filterTypes: ["biological_region"]
-    }
+    } : ""
   }, [getFTPdata])
 
   const rnacentralTrack = useMemo(() =>{
-    return {
+    return getFTPdata && getFTPdata.rnacentralTrack ? {
       name: "RNAcentral genomic coordinates data",
       type: "annotation",
       format: "gff",
       displayMode: "expanded",
       order: 3,
       color: "#3f7d97",
-      url: getFTPdata ? getFTPdata.rnacentralTrack : "",
-      indexURL: getFTPdata ? getFTPdata.rnacentralIndex : "",
-    }
+      url: getFTPdata.rnacentralTrack,
+      indexURL: getFTPdata.rnacentralIndex,
+    } : ""
   }, [getFTPdata])
 
   // Reload tracks when:
@@ -91,7 +91,7 @@ const IgvComponent = ({ data, index, files }) => {
           indexURL: getFTPdata.fastaIndex,
         },
         locus: locus,
-        tracks: [ ensemblTrack, rnacentralTrack ],
+        tracks: ensemblTrack && rnacentralTrack ? [ ensemblTrack, rnacentralTrack ] : ensemblTrack ? [ ensemblTrack ] : [ rnacentralTrack ],
         trackDefaults: {
           annotation: {
             height: 300
