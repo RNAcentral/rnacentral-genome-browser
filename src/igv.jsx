@@ -58,8 +58,9 @@ const IgvComponent = ({ data, index, files }) => {
   // Reload tracks when:
   // 1 - user clicks "Go to location" link
   // 2 - user uploads a file
+  // 3 - user selects a different species
   useEffect(() => {
-    if (genomeIndex !== index){
+    if (genomeIndex !== index || locus !== data.ucsc_chromosome + ":" + data.start + "-" + data.end){
       setLocus(data.ucsc_chromosome + ":" + data.start + "-" + data.end);
       setGenomeIndex(index);
       setReloadTrack(true);
@@ -67,7 +68,7 @@ const IgvComponent = ({ data, index, files }) => {
     if (files) {
       setReloadTrack(true);
     }
-  }, [data, files, index, genomeIndex])
+  }, [data, files, genomeIndex, index, locus])
 
   useEffect(() => {
     const assemblyId = data.ensembl_assembly.assembly_id;
