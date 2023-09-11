@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import IgvComponent from "./igv"
+import ftpData from "./files";
 import { useGetGenomesQuery, useGetGenomeBrowserQuery } from "./slice/apiSlice"
 
 function GenomeBrowser({species, chromosome, start, end}) {
@@ -118,12 +119,14 @@ function GenomeBrowser({species, chromosome, start, end}) {
       igvData.end = "";
     }
 
-    // get data for the select field
+    // get data for the select field (filter results to show only species that are listed in the ftpData file)
     // e.g. ['Homo sapiens|GRCh38|homo_sapiens', 'Mus musculus|GRCm39|mus_musculus', ...]
     // where "Homo sapiens|GRCh38" is the string displayed in the select and
     // homo_sapiens is the value used to get the data from the API
+    let genomeFromFTP = ftpData.map(item => item.name.toLowerCase());
+    let tempGenome = genome.results.filter(item => genomeFromFTP.includes(item.assembly_id.toLowerCase()));
     let genomeList = Array.from(new Set(
-        genome.results.map(item => item.common_name + "|" + item.assembly_id + "|" + item.ensembl_url)
+        tempGenome.map(item => item.common_name + "|" + item.assembly_id + "|" + item.ensembl_url)
     )).sort();
 
     return <div style={stylingContent.div}>
