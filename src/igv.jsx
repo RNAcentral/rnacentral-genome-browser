@@ -169,7 +169,7 @@ const IgvComponent = ({ data, index, files }) => {
                   + "&chromosome=" + newChr
                   + "&start=" + newStart
                   + "&end=" + newEnd;
-              window.history.replaceState("", "", window.location.origin + newParam);
+              window.history.replaceState("", "", window.location.href.split("?")[0] + newParam);
             });
           }
 
