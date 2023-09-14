@@ -36,6 +36,8 @@ function GenomeBrowser({species, chromosome, start, end}) {
   function handleSelectChange(event) {
     setPrevGenome(selectedGenome);
     setSelectedGenome(event.target.value);
+    // clear state to avoid issues
+    setFiles(null);
   }
 
   function onHandleFileChange(event) {
