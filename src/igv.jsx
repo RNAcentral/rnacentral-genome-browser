@@ -124,37 +124,78 @@ const IgvComponent = ({ data, index, files }) => {
         igv.createBrowser(igvContainer.current, igvOptions).then((browser) => {
           browser.on('trackclick', (track, popoverData) => {
             // Customize the contents of the track pop-over
-            let markup = '<table class="styled-table">';
+            if (track.id === "RNAcentral genomic coordinates data") {
+              let markup = '<table class="styled-table">';
 
-            // Don't show a pop-over when there's no data.
-            if (!popoverData || !popoverData.length) {
-                return false;
+              // Don't show a pop-over when there's no data.
+              if (!popoverData || !popoverData.length) {
+                  return false;
+              }
+
+              // A summary will be created using these variables
+              let databases, providing_databases
+
+              popoverData.every(function (nameValue) {
+                // We do not want to display the contents of these keys
+                const keyList = ["source:", "databases:", "providing_databases:"];
+
+                const domain = window.location.host.includes("test")
+                  ? "https://test.rnacentral.org/rna/"
+                  : window.location.host.includes("localhost:8000") || window.location.host.includes("127.0.0.1:8000")
+                  ? "http://localhost:8000/rna/"
+                  : "https://rnacentral.org/rna/"
+
+                if (nameValue.name) {
+                  // Customize pop-over text to include a link
+                  let value = nameValue.name.toLowerCase() === 'name' && nameValue.value.startsWith("URS")
+                      ? '<a href="' + domain + nameValue.value + '">' + nameValue.value + '</a>'
+                      : nameValue.value;
+
+                  // Show content (except for 'source', 'databases' and 'providing_databases')
+                  if (!keyList.some(str => str.toLowerCase().includes(nameValue.name.toLowerCase()))) {
+                    markup += "<tr><td>" + nameValue.name + "</td><td>" + value + "</td></tr>";
+                  }
+
+                  if (nameValue.name === "databases:") {
+                    databases = nameValue.value;
+                  }
+
+                  if (nameValue.name === "providing_databases:") {
+                    providing_databases = nameValue.value
+                  }
+
+                  // This is the last key before Exon
+                  if (nameValue.name === "Location") {
+                    // Add a custom summary
+                    const dbLength = databases.split(',').length;
+                    const dbString = dbLength === 1 ? " database " : " databases "
+                    const providingText = providing_databases
+                        ? "were provided by " + providing_databases.replaceAll(',', ', ')
+                        : "are based off of a sequence alignment"
+
+                    markup += "<tr><td>Summary</td><td>This sequence was observed in "
+                        + dbLength
+                        + dbString
+                        + "(" +  databases.replaceAll(',', ', ') + ") and the coordinates "
+                        + providingText
+                        + "</td></tr>";
+
+                    // Stop iteration to not show Exon info
+                    return false
+                  }
+                } else {
+                  // Not a name/value pair
+                  markup += "<tr><td>" + nameValue.toString() + "</td></tr>";
+                }
+
+                return true
+              });
+              markup += "</table>";
+
+              // By returning a string from the trackclick handler we're asking
+              // IGV to use our custom HTML in its pop-over.
+              return markup;
             }
-
-            popoverData.forEach(function (nameValue) {
-              if (nameValue.name) {
-                let domain = window.location.host.includes("test")
-                    ? "https://test.rnacentral.org/rna/"
-                    : window.location.host.includes("localhost:8000") || window.location.host.includes("127.0.0.1:8000")
-                    ? "http://localhost:8000/rna/"
-                    : "https://rnacentral.org/rna/"
-                // Customize pop-over text to include a link
-                let value = nameValue.name.toLowerCase() === 'name' && nameValue.value.startsWith("URS")
-                    ? '<a href="' + domain + nameValue.value + '">' + nameValue.value + '</a>'
-                    : nameValue.value;
-
-                markup += "<tr><td>" + nameValue.name + "</td><td>" + value + "</td></tr>";
-              }
-              else {
-                // Not a name/value pair
-                markup += "<tr><td>" + nameValue.toString() + "</td></tr>";
-              }
-            });
-            markup += "</table>";
-
-            // By returning a string from the trackclick handler we're asking
-            // IGV to use our custom HTML in its pop-over.
-            return markup;
           });
 
           // Update the page URL whenever the IGV viewer locus changes
