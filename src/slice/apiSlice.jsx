@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 // Define a service using a base URL and expected endpoints
 export const rnacentralApi = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://rnacentral.org/api/v1/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://test.rnacentral.org/api/v1/' }),
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getGenomes: builder.query({
