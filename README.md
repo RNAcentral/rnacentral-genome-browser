@@ -40,3 +40,9 @@ Builds the app for production to the `build` folder.
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### IGV version 3
+
+Embedding igv.js inside a shadow DOM breaks the UI when using IGV version 2, which is why I’m adding the IGV styles 
+directly to the `igv.css` file. While version 3 resolves this problem, it occasionally triggers an error in our widget 
+when using the "Go to location" link. We need to investigate potential solutions for this issue.
