@@ -216,6 +216,9 @@ const IgvComponent = ({ data, index, files }) => {
 
           // Update state
           setBrowser(browser)
+        })
+        .catch(() => {
+          setError(true);
         });
       }
     } else {
